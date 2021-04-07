@@ -1,0 +1,47 @@
+---
+title: "Data 607 Assignment 9"
+author: "Claire Meyer"
+date: "4/7/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## NYT API
+
+In this document, we'll be using the New York Times' Book Review API. Using their documentation, we're going to call to the API to grab the current hardcover nonfiction list.
+
+```{r libraries, echo=FALSE}
+library(tidyverse)
+library(jsonlite)
+```
+
+```{r api-call}
+url <- 'https://api.nytimes.com/svc/books/v3/lists/current/hardcover-nonfiction.json?api-key=3ImZ9GGsnMCDHHePNZ6IXzTpHT5qh98O'
+
+raw_results <- fromJSON(txt = url)
+books_df <- raw_results$results$books
+```
+
+
+## Analysis
+
+Then, we can do some lightweight analysis to see how long some of these books have been on the list, and their makeup. 
+
+We find that there is only one brand new entrant to the list ("REMEMBER"), with a couple outliers with more than 20 weeks on the list ("UNTAMED" and "HOW TO BE AN ANTIRACIST").
+
+```{r book-analysis}
+summary(books_df$weeks_on_list)
+```
+
+```{r boxplot}
+boxplot(books_df$weeks_on_list)
+```
+
+```{r hist}
+ggplot(books_df, aes(books_df$weeks_on_list)) + geom_histogram(binwidth = 1)
+```
